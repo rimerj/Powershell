@@ -22,13 +22,13 @@ write-output "   +++ Storage Account Retrieved"
 
 if ( $filePath -eq "") {
     $location = "/bdp_output/bdp_extracts/LoomisFeeSchedule2021Extract/"
-    Write-Output "====== Deriving Source File from path $location"
+    Write-Output "====== Deriving File to send from path $location"
 
     # DERIVE Latest File in Blob Storage Location
     $listOfFiles = Get-AzDataLakeGen2ChildItem -FileSystem "provider" -Path $location -FetchProperty -Context $context_storageAcct.Context
     $filteredFiles = @($listOfFiles | Where-Object {$_.Path -match '^.*BHPROV_DAILY_[\d]{8}_[\d]{4}.txt$' } | % {$_.Path} | Sort-Object -Descending)
     if (-Not $filteredFiles) {
-        throw "   --- Unable to determine file to upload in latest-derivation search of $location"
+        throw "   --- Unable to derive file to upload in latest-derivation search of $location; No Files Found"
     }
     write-output "   +++ $($filteredFiles.Length) Files Found in $location"
     write-output $filteredFiles
